@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hoop Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- variables.css --- */
+        :root {
+            /* Colors - Premium Dark Theme */
+            --bg-dark: #0f0f13;
+            --bg-card: #1a1a24;
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+
+            /* Brand Colors */
+            --primary: #FF4B2B;
+            /* Orange-Red Gradient Start */
+            --primary-end: #FF416C;
+            /* Orange-Red Gradient End */
+            --accent-blue: #4facfe;
+            --accent-blue-end: #00f2fe;
+            --whatsapp-green: #25D366;
+            --snapchat-yellow: #FFFC00;
+
+            /* Interface */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+
+            /* Dimensions */
+            --nav-height: 70px;
+            --header-height: 60px;
+            --card-ratio: 1.5;
+            /* Aspect Ratio */
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+            /* Prevent scroll on body, handle in app */
+            height: 100vh;
+        }
+
+        /* --- main.css --- */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            max-width: 480px;
+            /* Mobile width cap on desktop */
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .top-bar {
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            /* FIXED: High Z-Index */
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+            pointer-events: auto;
+            /* FIXED: Ensure clicks work */
+        }
+
+        .user-profile-icon {
+            cursor: pointer;
+            /* FIXED: Visual feedback */
+        }
+
+        .user-profile-icon img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gems-display {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Main Area */
+        .card-stack {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 80px;
+            /* Space for controls */
+        }
+
+        /* Navigation */
+        .bottom-nav {
+            height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+            /* FIXED: iOS Safe Area */
+            padding-bottom: env(safe-area-inset-bottom);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--glass-border);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+            /* FIXED: High Z-Index */
+            pointer-events: auto;
+            /* FIXED: Ensure clicks work */
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- components.css --- */
+        /* Profile Card */
+        .card {
+            position: absolute;
+            width: 90%;
+            height: 70%;
+            border-radius: 24px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transform-origin: 50% 100%;
+            will-change: transform, opacity;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            /* Default state for top card */
+            z-index: 5;
+        }
+
+        .card:nth-last-child(2) {
+            transform: scale(0.95) translateY(10px);
+            z-index: 4;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .card:nth-last-child(3) {
+            transform: scale(0.9) translateY(20px);
+            z-index: 3;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .card-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+            padding: 20px;
+            padding-bottom: 30px;
+            color: white;
+        }
+
+        .card-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-age {
+            font-weight: 400;
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .card-bio {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-top: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .social-platforms {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .platform-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 90px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            z-index: 15;
+        }
+
+        .control-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.pass {
+            color: #ff4b4b;
+            border: 2px solid #ff4b4b;
+        }
+
+        .control-btn.request {
+            width: 72px;
+            /* Slightly larger main action */
+            height: 72px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-end));
+            color: white;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .control-btn.request svg {
+            margin-bottom: -4px;
+        }
+
+        .control-btn.request .cost {
+            font-size: 0.7rem;
+            font-weight: 800;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+
+        /* Notification */
+        .notification {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            width: 80%;
+            animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .notification .icon {
+            font-size: 2rem;
+        }
+
+        .notification h4 {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .notification p {
+            margin: 0;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        /* ======= NEW VIEWS CSS ======= */
+
+        .view {
+            position: absolute;
+            top: var(--header-height);
+            bottom: var(--nav-height);
+            width: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .view.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #view-discovery {
+            padding: 0;
+            /* Card stack needs full area */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Shop */
+        .view-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .view-header h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .view-header p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .ad-section {
+            margin-bottom: 30px;
+        }
+
+        .ad-card {
+            width: 100%;
+            background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .ad-card:active {
+            transform: scale(0.98);
+        }
+
+        .ad-icon {
+            font-size: 2.5rem;
+        }
+
+        .ad-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .ad-info h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .ad-info p {
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .ad-badge {
+            background: white;
+            color: #FF5E62;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.7rem;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 15px 10px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gem-icon-lg {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .shop-amount {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .shop-price {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .shop-tag {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-blue);
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Profile */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-blue);
+            margin-bottom: 15px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .request-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .req-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .req-info h4 {
+            margin: 0;
+        }
+
+        .req-status {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--whatsapp-green);
+            background: rgba(37, 211, 102, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        /* Ad Overlay */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-content {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* --- animations.css --- */
+        .swipe-left {
+            animation: flyOutLeft 0.5s ease-out forwards;
+        }
+
+        .swipe-right {
+            animation: flyOutRight 0.5s ease-out forwards;
+        }
+
+        @keyframes flyOutLeft {
+            0% {
+                transform: translateX(0) rotate(0);
+            }
+
+            100% {
+                transform: translateX(-150%) rotate(-30deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes flyOutRight {
+            0% {
+                transform: translateX(0) rotate(0);
+            }
+
+            100% {
+                transform: translateX(150%) rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 75, 43, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 43, 0);
+            }
+        }
+
+        .user-profile-icon img:hover {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="app-container">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="user-profile-icon">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Profile" />
+            </div>
+            <!-- VERSION BADGE FOR DEBUGGING -->
+            <div
+                style="background:red; color:white; padding:2px 5px; border-radius:4px; font-size:10px; position:absolute; left:50%; transform:translateX(-50%); top:10px;">
+                v2.0 FIXED
+            </div>
+            <div class="gems-display">
+                <span class="gem-icon">💎</span>
+                <span id="gem-count">0</span>
+            </div>
+        </header>
+
+        <!-- Main Views -->
+        <div id="view-discovery" class="view active">
+            <!-- Main Card Area -->
+            <main id="card-stack" class="card-stack">
+                <!-- Cards will be injected here by JS -->
+                <div class="empty-state hidden">
+                    <h2>No more profiles!</h2>
+                    <p>Check back later.</p>
+                </div>
+            </main>
+
+            <!-- Action Controls (Overlay) -->
+            <div class="controls">
+                <button id="btn-pass" class="control-btn pass">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <button id="btn-request" class="control-btn request">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path
+                            d="M12,22l-9-5l1-12l8-3l8,3l1,12L12,22z M12,6.5l-5,2l-0.5,8L12,20l5.5-3.5l-0.5-8L12,6.5z" />
+                    </svg>
+                    <span class="cost">10</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="view-shop" class="view hidden">
+            <div class="view-header">
+                <h2>Gem Store</h2>
+                <p>Get more diamonds to request usernames!</p>
+            </div>
+
+            <!-- Ad Section -->
+            <div class="ad-section">
+                <button id="btn-watch-ad" class="ad-card">
+                    <div class="ad-icon">📺</div>
+                    <div class="ad-info">
+                        <h3>Watch Video</h3>
+                        <p>Get <strong>+50 💎</strong> Free</p>
+                    </div>
+                    <div class="ad-badge">FREE</div>
+                </button>
+            </div>
+
+            <h3>Buy Gems</h3>
+            <div class="shop-grid">
+                <button class="shop-item" data-gems="100" data-price="$0.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">100</div>
+                    <div class="shop-price">$0.99</div>
+                </button>
+                <button class="shop-item" data-gems="500" data-price="$4.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">500</div>
+                    <div class="shop-price">$4.99</div>
+                    <div class="shop-tag">POPULAR</div>
+                </button>
+                <button class="shop-item" data-gems="1500" data-price="$9.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">1500</div>
+                    <div class="shop-price">$9.99</div>
+                </button>
+            </div>
+        </div>
+
+        <div id="view-profile" class="view hidden">
+            <div class="profile-header">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Profile" class="profile-avatar" />
+                <h2>My Profile</h2>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-val" id="profile-gem-count">0</span>
+                        <span class="stat-label">Gems</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requests-section">
+                <h3>Pending Requests</h3>
+                <div id="requests-list" class="requests-list">
+                    <!-- List items injected by JS -->
+                    <div class="empty-list">No requests yet.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="discovery">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </button>
+            <button class="nav-item" data-target="shop">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </button>
+            <button class="nav-item" data-target="profile">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Notification Overlay -->
+    <div id="notification" class="notification hidden">
+        <span class="icon">👻</span>
+        <div class="text">
+            <h4>Request Sent!</h4>
+            <p>Wait for them to accept.</p>
+        </div>
+    </div>
+
+    <!-- Ad Overlay -->
+    <div id="ad-overlay" class="ad-overlay hidden">
+        <div class="ad-content">
+            <div class="spinner"></div>
+            <h3>Watching Ad...</h3>
+            <p>Please wait 3 seconds</p>
+        </div>
+    </div>
+
+    <script>
+        // --- JS BUNDLE ---
+
+        // File: js/data.js
+        const mockUsers = [
+            {
+                id: 1,
+                name: "Sarah",
+                age: 23,
+                bio: "Adventure seeker. Loves hiking and coffee. ☕️🏔️",
+                image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
+                socials: { snapchat: true, instagram: true }
+            },
+            {
+                id: 2,
+                name: "Jessica",
+                age: 21,
+                bio: "Art student 🎨. Living life one color at a time.",
+                image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+                socials: { instagram: true }
+            },
+            {
+                id: 3,
+                name: "Emily",
+                age: 24,
+                bio: "Digital Nomad. Currently in Bali. Let's swap travel stories!",
+                image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+                socials: { snapchat: true }
+            },
+            {
+                id: 4,
+                name: "Chloe",
+                age: 22,
+                bio: "Music is my life. 🎧 What's on your playlist?",
+                image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80",
+                socials: { instagram: true, tiktok: true }
+            },
+            {
+                id: 5,
+                name: "Anna",
+                age: 20,
+                bio: "Just looking for someone to play Mario Kart with.",
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+                socials: { snapchat: true, instagram: true }
+            }
+        ];
+
+        // File: js/state.js
+        const STORAGE_KEY = 'hoop_clone_state';
+
+        const defaultState = {
+            gems: 100, // Initial bonus
+            requestedUsers: [], // IDs of users we requested
+            seenUsers: [], // IDs of users we swiped specifically
+        };
+
+        function loadState() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+            return defaultState;
+        }
+
+        function saveState(state) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function spendGems(amount, user = null) {
+            const state = loadState();
+            if (state.gems >= amount) {
+                state.gems -= amount;
+                if (user) {
+                    state.requestedUsers.push(user);
+                }
+                saveState(state);
+                return true;
+            }
+            return false;
+        }
+
+        function addGems(amount) {
+            const state = loadState();
+            state.gems += amount;
+            saveState(state);
+            return state.gems;
+        }
+
+        function getGemBalance() {
+            return loadState().gems;
+        }
+
+        function getRequestedUsers() {
+            return loadState().requestedUsers;
+        }
+
+        // File: js/app.js
+        class App {
+            constructor() {
+                this.users = [...mockUsers];
+                this.currentIndex = 0;
+                this.cardStack = document.getElementById('card-stack');
+                this.gemCountEl = document.getElementById('gem-count');
+                this.notificationEl = document.getElementById('notification');
+                this.adOverlay = document.getElementById('ad-overlay');
+
+                this.startX = 0;
+                this.currentCard = null;
+                this.isDragging = false;
+
+                this.init();
+            }
+
+            init() {
+                this.updateGemDisplay();
+                this.renderCards();
+                this.setupControls();
+                this.setupNavigation();
+                this.setupShop();
+            }
+
+            updateGemDisplay() {
+                // Update top bar
+                const balance = getGemBalance();
+                this.gemCountEl.textContent = balance;
+
+                // Update profile stat
+                const profileCount = document.getElementById('profile-gem-count');
+                if (profileCount) profileCount.textContent = balance;
+            }
+
+            /* --- Navigation Logic --- */
+            setupNavigation() {
+                // Header Profile Icon Click
+                const profileIcon = document.querySelector('.user-profile-icon');
+                if (profileIcon) {
+                    profileIcon.addEventListener('click', () => {
+                        this.switchView('profile');
+                        // Update bottom nav state manually
+                        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                        const profileBtn = document.querySelector('.nav-item[data-target="profile"]');
+                        if (profileBtn) profileBtn.classList.add('active');
+                    });
+                }
+
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Remove active class from all
+                        navItems.forEach(n => n.classList.remove('active'));
+                        btn.classList.add('active');
+
+                        // Switch View
+                        const target = btn.dataset.target; // discovery, shop, profile
+                        this.switchView(target);
+                    });
+                });
+            }
+
+            switchView(viewName) {
+                // Hide all views
+                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+
+                // Show target
+                const targetEl = document.getElementById(`view-${viewName}`);
+                if (targetEl) {
+                    targetEl.classList.remove('hidden');
+                    // Small delay to allow display:block to apply before opacity transition
+                    setTimeout(() => targetEl.classList.add('active'), 10);
+
+                    if (viewName === 'profile') {
+                        this.renderProfile();
+                    }
+                }
+            }
+
+            /* --- Shop Logic --- */
+            setupShop() {
+                // Watch Ad
+                document.getElementById('btn-watch-ad').addEventListener('click', () => {
+                    this.watchAd();
+                });
+
+                // Buy Packs
+                document.querySelectorAll('.shop-item').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const amount = parseInt(btn.dataset.gems);
+                        addGems(amount);
+                        this.updateGemDisplay();
+                        this.showNotification(`Purchased ${amount} Gems!`, '💎');
+                    });
+                });
+            }
+
+            watchAd() {
+                this.adOverlay.classList.remove('hidden');
+
+                // Simulate 3s Ad
+                setTimeout(() => {
+                    this.adOverlay.classList.add('hidden');
+                    addGems(50);
+                    this.updateGemDisplay();
+                    this.showNotification('You earned 50 Gems!', '🎉');
+                }, 3000);
+            }
+
+            /* --- Profile Logic --- */
+            renderProfile() {
+                const list = document.getElementById('requests-list');
+                const requests = getRequestedUsers();
+
+                if (requests.length === 0) {
+                    list.innerHTML = '<div class="empty-list" style="text-align:center; opacity:0.5; margin-top:20px;">No requests yet.</div>';
+                    return;
+                }
+
+                list.innerHTML = requests.map(user => `
+                <div class="request-item">
+                    <img src="${user.image}" class="req-avatar" />
+                    <div class="req-info">
+                        <h4>${user.name}</h4>
+                        <span style="font-size:0.8rem; opacity:0.7">Requested via Hoop</span>
+                    </div>
+                    <div class="req-status">Sent</div>
+                </div>
+            `).join('');
+            }
+
+            /* --- Card Logic --- */
+            renderCards() {
+                // Clear existing
+                this.cardStack.innerHTML = '';
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state hidden';
+                emptyState.innerHTML = `<h2>No more profiles!</h2><p>Check back later.</p>`;
+                this.cardStack.appendChild(emptyState);
+
+                // Render remaining cards
+                const visibleUsers = this.users.slice(this.currentIndex, this.currentIndex + 3).reverse();
+
+                if (visibleUsers.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                visibleUsers.forEach((user, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.backgroundImage = `url(${user.image})`;
+
+                    // Generate Badges
+                    let badges = '';
+                    if (user.socials.snapchat) badges += `<span class="platform-badge" style="color:yellow">👻 Snap</span>`;
+                    if (user.socials.instagram) badges += `<span class="platform-badge" style="color:pink">📸 Insta</span>`;
+
+                    card.innerHTML = `
+                    <div class="card-overlay">
+                        <h2 class="card-name">${user.name}, <span class="card-age">${user.age}</span></h2>
+                        <div class="social-platforms">${badges}</div>
+                        <p class="card-bio">${user.bio}</p>
+                    </div>
+                `;
+
+                    // Store data on element for easy access
+                    card.dataset.userId = JSON.stringify(user);
+
+                    this.cardStack.appendChild(card);
+                });
+
+                this.bindCardEvents();
+            }
+
+            bindCardEvents() {
+                const cards = document.querySelectorAll('.card');
+                if (cards.length === 0) return;
+
+                this.currentCard = cards[cards.length - 1]; // Last added is visually on top
+
+                // Touch Events
+                this.currentCard.addEventListener('touchstart', (e) => this.inputStart(e.touches[0].clientX));
+                this.currentCard.addEventListener('touchmove', (e) => this.inputMove(e.touches[0].clientX));
+                this.currentCard.addEventListener('touchend', () => this.inputEnd());
+
+                // Mouse Events
+                this.currentCard.addEventListener('mousedown', (e) => this.inputStart(e.clientX));
+                document.addEventListener('mousemove', (e) => this.inputMove(e.clientX));
+                document.addEventListener('mouseup', () => this.inputEnd());
+            }
+
+            inputStart(x) {
+                if (!this.currentCard) return;
+                this.startX = x;
+                this.isDragging = true;
+                this.currentCard.style.transition = 'none';
+            }
+
+            inputMove(x) {
+                if (!this.isDragging || !this.currentCard) return;
+                const currentX = x;
+                const diff = currentX - this.startX;
+                const rotate = diff * 0.1;
+
+                this.currentCard.style.transform = `translateX(${diff}px) rotate(${rotate}deg)`;
+                const opacity = Math.min(Math.abs(diff) / 300, 1);
+            }
+
+            inputEnd() {
+                if (!this.isDragging || !this.currentCard) return;
+                this.isDragging = false;
+
+                const currentTransform = this.currentCard.style.transform;
+                const match = currentTransform.match(/translateX\(([-0-9.]+)px\)/);
+                const diff = match ? parseFloat(match[1]) : 0;
+                const threshold = 100;
+
+                if (diff > threshold) {
+                    this.attemptRequest();
+                } else if (diff < -threshold) {
+                    this.passCard();
+                } else {
+                    this.currentCard.style.transition = 'transform 0.3s ease';
+                    this.currentCard.style.transform = 'translateX(0) rotate(0)';
+                }
+            }
+
+            passCard() {
+                this.currentCard.classList.add('swipe-left');
+                this.processSwipe();
+            }
+
+            attemptRequest() {
+                // Get user data from card
+                let user = null;
+                try {
+                    user = JSON.parse(this.currentCard.dataset.userId);
+                } catch (e) { }
+
+                if (spendGems(10, user)) {
+                    this.currentCard.classList.add('swipe-right');
+                    this.showNotification('Request Sent!', '👻');
+                    this.updateGemDisplay();
+                    this.processSwipe();
+                } else {
+                    this.showNotification('Not enough gems!', '💎');
+                    // Reset card
+                    this.currentCard.style.transition = 'transform 0.3s ease';
+                    this.currentCard.style.transform = 'translateX(0) rotate(0)';
+                }
+            }
+
+            processSwipe() {
+                setTimeout(() => {
+                    this.currentIndex++;
+                    this.renderCards();
+                }, 300);
+            }
+
+            setupControls() {
+                const btnPass = document.getElementById('btn-pass');
+                if (btnPass) {
+                    btnPass.addEventListener('click', () => {
+                        if (this.currentCard) this.passCard();
+                    });
+                }
+
+                const btnRequest = document.getElementById('btn-request');
+                if (btnRequest) {
+                    btnRequest.addEventListener('click', () => {
+                        if (this.currentCard) this.attemptRequest();
+                    });
+                }
+            }
+
+            showNotification(title, icon = '👻') {
+                const notif = this.notificationEl;
+                notif.querySelector('h4').textContent = title;
+                notif.querySelector('.icon').textContent = icon;
+
+                notif.classList.remove('hidden');
+                setTimeout(() => {
+                    notif.classList.add('hidden');
+                }, 2000);
+            }
+        }
+
+        // Start App
+        document.addEventListener('DOMContentLoaded', () => {
+            new App();
+        });
+    </script>
+</body>
+
+</html>
