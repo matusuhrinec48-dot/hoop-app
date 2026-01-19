@@ -1,0 +1,92 @@
+.app-container {
+    width: 100%;
+    height: 100%;
+    max-width: 480px;
+    /* Mobile width cap on desktop */
+    margin: 0 auto;
+    position: relative;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Header */
+.top-bar {
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.user-profile-icon img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.gems-display {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: 1px solid var(--glass-border);
+}
+
+/* Main Area */
+.card-stack {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 80px;
+    /* Space for controls */
+}
+
+/* Navigation */
+.bottom-nav {
+    height: var(--nav-height);
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid var(--glass-border);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 20;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.hidden {
+    display: none !important;
+}

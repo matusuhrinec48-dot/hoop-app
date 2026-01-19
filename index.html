@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hoop Clone</title>
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app" class="app-container">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="user-profile-icon">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Profile" />
+            </div>
+            <div class="gems-display">
+                <span class="gem-icon">💎</span>
+                <span id="gem-count">0</span>
+            </div>
+        </header>
+
+        <!-- Main Views -->
+        <div id="view-discovery" class="view active">
+            <!-- Main Card Area -->
+            <main id="card-stack" class="card-stack">
+                <!-- Cards will be injected here by JS -->
+                <div class="empty-state hidden">
+                    <h2>No more profiles!</h2>
+                    <p>Check back later.</p>
+                </div>
+            </main>
+
+            <!-- Action Controls (Overlay) -->
+            <div class="controls">
+                <button id="btn-pass" class="control-btn pass">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <button id="btn-request" class="control-btn request">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path
+                            d="M12,22l-9-5l1-12l8-3l8,3l1,12L12,22z M12,6.5l-5,2l-0.5,8L12,20l5.5-3.5l-0.5-8L12,6.5z" />
+                    </svg>
+                    <span class="cost">10</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="view-shop" class="view hidden">
+            <div class="view-header">
+                <h2>Gem Store</h2>
+                <p>Get more diamonds to request usernames!</p>
+            </div>
+
+            <!-- Ad Section -->
+            <div class="ad-section">
+                <button id="btn-watch-ad" class="ad-card">
+                    <div class="ad-icon">📺</div>
+                    <div class="ad-info">
+                        <h3>Watch Video</h3>
+                        <p>Get <strong>+50 💎</strong> Free</p>
+                    </div>
+                    <div class="ad-badge">FREE</div>
+                </button>
+            </div>
+
+            <h3>Buy Gems</h3>
+            <div class="shop-grid">
+                <button class="shop-item" data-gems="100" data-price="$0.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">100</div>
+                    <div class="shop-price">$0.99</div>
+                </button>
+                <button class="shop-item" data-gems="500" data-price="$4.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">500</div>
+                    <div class="shop-price">$4.99</div>
+                    <div class="shop-tag">POPULAR</div>
+                </button>
+                <button class="shop-item" data-gems="1500" data-price="$9.99">
+                    <div class="gem-icon-lg">💎</div>
+                    <div class="shop-amount">1500</div>
+                    <div class="shop-price">$9.99</div>
+                </button>
+            </div>
+        </div>
+
+        <div id="view-profile" class="view hidden">
+            <div class="profile-header">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Profile" class="profile-avatar" />
+                <h2>My Profile</h2>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-val" id="profile-gem-count">0</span>
+                        <span class="stat-label">Gems</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requests-section">
+                <h3>Pending Requests</h3>
+                <div id="requests-list" class="requests-list">
+                    <!-- List items injected by JS -->
+                    <div class="empty-list">No requests yet.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="discovery">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </button>
+            <button class="nav-item" data-target="shop">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </button>
+            <button class="nav-item" data-target="profile">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Notification Overlay -->
+    <div id="notification" class="notification hidden">
+        <span class="icon">👻</span>
+        <div class="text">
+            <h4>Request Sent!</h4>
+            <p>Wait for them to accept.</p>
+        </div>
+    </div>
+
+    <!-- Ad Overlay -->
+    <div id="ad-overlay" class="ad-overlay hidden">
+        <div class="ad-content">
+            <div class="spinner"></div>
+            <h3>Watching Ad...</h3>
+            <p>Please wait 3 seconds</p>
+        </div>
+    </div>
+
+    <script src="js/bundle.js"></script>
+</body>
+
+</html>

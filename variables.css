@@ -1,0 +1,39 @@
+:root {
+    /* Colors - Premium Dark Theme */
+    --bg-dark: #0f0f13;
+    --bg-card: #1a1a24;
+    --text-main: #ffffff;
+    --text-muted: #a0a0b0;
+    
+    /* Brand Colors */
+    --primary: #FF4B2B;  /* Orange-Red Gradient Start */
+    --primary-end: #FF416C; /* Orange-Red Gradient End */
+    --accent-blue: #4facfe;
+    --accent-blue-end: #00f2fe;
+    --whatsapp-green: #25D366;
+    --snapchat-yellow: #FFFC00;
+
+    /* Interface */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.5);
+
+    /* Dimensions */
+    --nav-height: 70px;
+    --header-height: 60px;
+    --card-ratio: 1.5; /* Aspect Ratio */
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden; /* Prevent scroll on body, handle in app */
+    height: 100vh;
+}
